@@ -51,7 +51,7 @@ const Landing = () => {
                 <motion.button 
                   whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(34,197,94,0.4)" }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-16 py-8 bg-brand-primary text-black font-black text-2xl uppercase tracking-[0.2em] rounded-full shadow-[0_20px_60px_rgba(34,197,94,0.3)] transition-all flex items-center justify-center gap-4 group"
+                  className="px-16 py-8 bg-emerald-500 text-white font-black text-2xl uppercase tracking-[0.2em] rounded-full shadow-[0_20px_60px_rgba(34,197,94,0.5)] border-2 border-emerald-400 hover:bg-emerald-400 transition-all flex items-center justify-center gap-4 group"
                 >
                   Get Started
                   <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" />

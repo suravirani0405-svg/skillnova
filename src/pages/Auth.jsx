@@ -247,7 +247,7 @@ const Auth = () => {
                          <button 
                            type="submit"
                            disabled={loading}
-                           className="w-full py-5 bg-brand-primary text-black font-black uppercase tracking-[0.4em] rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_10px_40px_rgba(16,185,129,0.3)]"
+                           className="w-full py-5 bg-emerald-500 text-white font-black uppercase tracking-[0.4em] rounded-xl hover:bg-emerald-400 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_10px_40px_rgba(16,185,129,0.4)] border border-emerald-400"
                          >
                            {loading ? <Loader2 className="animate-spin w-5 h-5" /> : (
                               <>
@@ -398,7 +398,7 @@ const Auth = () => {
                     <button 
                       type="submit" 
                       disabled={loading}
-                      className="w-full bg-brand-primary text-black font-black uppercase tracking-[0.4em] py-5 rounded-xl shadow-[0_10px_40px_rgba(34,197,94,0.3)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 group relative overflow-hidden"
+                      className="w-full bg-emerald-500 text-white font-black uppercase tracking-[0.4em] py-5 rounded-xl shadow-[0_10px_40px_rgba(34,197,94,0.4)] hover:bg-emerald-400 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 group relative overflow-hidden border border-emerald-400"
                     >
                       {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                         <>
