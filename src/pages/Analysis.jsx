@@ -92,7 +92,7 @@ const Analysis = () => {
         const formData = new FormData();
         formData.append('file', uploadedFile);
         
-        const response = await fetch('http://localhost:8000/api/v1/analyze/resume', {
+        const response = await fetch('/api/v1/analyze/resume', {
           method: 'POST',
           body: formData,
         });
@@ -101,7 +101,7 @@ const Analysis = () => {
         result = await response.json();
       } else if (resumeText && resumeText.trim()) {
         // Handle Raw Text Analysis
-        const response = await fetch('http://localhost:8000/api/v1/analyze/text', {
+        const response = await fetch('/api/v1/analyze/text', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: resumeText.trim() }),
@@ -111,7 +111,7 @@ const Analysis = () => {
         result = await response.json();
       } else if (academicData.cgpa || academicData.subjects[0].name) {
         // Handle Academic Matrix
-        const response = await fetch('http://localhost:8000/api/v1/analyze/academic', {
+        const response = await fetch('/api/v1/analyze/academic', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(academicData),

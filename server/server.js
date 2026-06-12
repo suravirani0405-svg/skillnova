@@ -18,7 +18,8 @@ process.on('unhandledRejection', (reason, promise) => {
 const app = express();
 const PORT = 5001;
 const SECRET_KEY = 'skillnova_neural_secret_2026';
-const DB_PATH = path.join(__dirname, 'users.json');
+const IS_VERCEL = process.env.VERCEL === '1';
+const DB_PATH = IS_VERCEL ? path.join('/tmp', 'users.json') : path.join(__dirname, 'users.json');
 
 app.use(cors());
 app.use(express.json());
@@ -221,6 +222,10 @@ app.post('/api/verify-code', (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 SkillNova Backend Uplink Active on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+      console.log(`🚀 SkillNova Backend Uplink Active on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

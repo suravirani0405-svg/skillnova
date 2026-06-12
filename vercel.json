@@ -1,8 +1,33 @@
 {
+  "version": 2,
   "installCommand": "npm install --legacy-peer-deps",
   "buildCommand": "npm run build",
-
+  "framework": "vite",
+  "functions": {
+    "server/server.js": {
+      "runtime": "vercel-node@latest"
+    },
+    "ai_backend/main.py": {
+      "runtime": "vercel-python@latest"
+    }
+  },
   "rewrites": [
+    {
+      "source": "/api/v1/(.*)",
+      "destination": "ai_backend/main.py"
+    },
+    {
+      "source": "/api/generate-quiz",
+      "destination": "ai_backend/main.py"
+    },
+    {
+      "source": "/api/chat",
+      "destination": "ai_backend/main.py"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "server/server.js"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
