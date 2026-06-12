@@ -464,8 +464,8 @@ const PracticeBattle = () => {
   // 4. EVALUATION VIEW
   if (view === "evaluation") {
     const correctnessScore = accuracy;
-    const clarityScore = Math.max(10, Math.round(accuracy * 0.85));
-    const depthScore = Math.max(15, Math.round(accuracy * 0.95));
+    const clarityScore = accuracy === 0 ? 0 : Math.max(10, Math.round(accuracy * 0.85));
+    const depthScore = accuracy === 0 ? 0 : Math.max(15, Math.round(accuracy * 0.95));
 
     return (
        <div className="min-h-screen pt-24 pb-32 px-6 bg-transparent relative overflow-hidden transition-all duration-1000 uppercase">

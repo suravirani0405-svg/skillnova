@@ -231,16 +231,25 @@ const Analysis = () => {
                                       />
                                    </div>
                                    <div className="w-24 space-y-2">
-                                      <input 
-                                         type="text" placeholder="GRADE" 
-                                         className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-brand-primary text-[10px] font-black outline-none focus:border-brand-primary text-center" 
+                                      <select 
+                                         className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-3 text-brand-primary text-[10px] font-black outline-none focus:border-brand-primary text-center appearance-none" 
                                          value={sub.grade}
                                          onChange={(e) => {
                                             const newSubs = [...academicData.subjects];
                                             newSubs[i].grade = e.target.value;
                                             setAcademicData({...academicData, subjects: newSubs});
                                          }}
-                                      />
+                                      >
+                                         <option value="" disabled className="bg-black text-white/50">GRADE</option>
+                                         <option value="O" className="bg-black text-brand-primary font-black">O</option>
+                                         <option value="A+" className="bg-black text-brand-primary font-black">A+</option>
+                                         <option value="A" className="bg-black text-brand-primary font-black">A</option>
+                                         <option value="B+" className="bg-black text-brand-primary font-black">B+</option>
+                                         <option value="B" className="bg-black text-brand-primary font-black">B</option>
+                                         <option value="C" className="bg-black text-brand-primary font-black">C</option>
+                                         <option value="D" className="bg-black text-brand-primary font-black">D</option>
+                                         <option value="F" className="bg-black text-brand-primary font-black">F</option>
+                                      </select>
                                    </div>
                                    <button onClick={() => removeSubject(i)} className="text-white/10 hover:text-red-400 p-2"><Trash2 className="w-4 h-4" /></button>
                                 </div>

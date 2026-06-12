@@ -15,3 +15,5 @@ try:
     print(f"RESPONSE TIER: {response.text[:50]}...")
 except Exception as e:
     print(f"FAILED: {str(e)}")
+
+

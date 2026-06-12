@@ -428,6 +428,7 @@ const Auth = () => {
               {!isForgotPassword && (
                  <div className="mt-10 pt-8 border-t border-white/5 text-center relative z-10">
                    <button
+                     type="button"
                      onClick={() => { setIsLogin(!isLogin); setError(""); }}
                      className="text-white/30 hover:text-brand-primary transition-colors text-[10px] font-black uppercase tracking-widest"
                    >
