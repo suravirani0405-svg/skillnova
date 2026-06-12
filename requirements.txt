@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+google-generativeai
+pydantic
+python-dotenv
+pypdf
+pypdf[image]
+pypdf[crypto]
