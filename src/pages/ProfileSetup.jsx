@@ -137,10 +137,10 @@ const ProfileSetup = () => {
                                 <div className="relative group/input">
                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mb-2 block">Target Domain</label>
                                    <select className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 transition-all outline-none appearance-none text-white">
-                                      <option className="bg-zinc-900 text-white">Software Engineering</option>
-                                      <option className="bg-zinc-900 text-white">AI / Machine Learning</option>
-                                      <option className="bg-zinc-900 text-white">Data Analytics</option>
-                                      <option className="bg-zinc-900 text-white">Cybersecurity</option>
+                                      <option style={{ color: '#111827', backgroundColor: '#ffffff' }}>Software Engineering</option>
+                                      <option style={{ color: '#111827', backgroundColor: '#ffffff' }}>AI / Machine Learning</option>
+                                      <option style={{ color: '#111827', backgroundColor: '#ffffff' }}>Data Analytics</option>
+                                      <option style={{ color: '#111827', backgroundColor: '#ffffff' }}>Cybersecurity</option>
                                    </select>
                                 </div>
                                 <div className="relative group/input">
