@@ -325,10 +325,10 @@ const Auth = () => {
                                   ref={yearRef}
                                   className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-5 focus:outline-none focus:border-brand-primary transition-all text-white appearance-none"
                                 >
-                                  <option value="1">1st Year</option>
-                                  <option value="2">2nd Year</option>
-                                  <option value="3">3rd Year</option>
-                                  <option value="4">4th Year</option>
+                                  <option value="1" className="bg-zinc-900 text-white">1st Year</option>
+                                  <option value="2" className="bg-zinc-900 text-white">2nd Year</option>
+                                  <option value="3" className="bg-zinc-900 text-white">3rd Year</option>
+                                  <option value="4" className="bg-zinc-900 text-white">4th Year</option>
                                 </select>
                               </div>
                           </div>
