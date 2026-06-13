@@ -5,6 +5,17 @@
 
 const API_BASE_URL = '/api';
 
+// Safe JSON parser - prevents crash on empty/HTML responses
+const safeJson = async (response) => {
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error('[Auth] Non-JSON response:', text.substring(0, 200));
+    throw new Error(`Server error (${response.status}): The backend returned an invalid response. Please try again.`);
+  }
+};
+
 export const authService = {
   /**
    * Register a new user
@@ -17,7 +28,7 @@ export const authService = {
         body: JSON.stringify(userData)
       });
 
-      const data = await response.json();
+      const data = await safeJson(response);
       
       if (!response.ok) {
         throw new Error(data.message || "COMMUNICATION_LINK_ERROR");
@@ -46,7 +57,7 @@ export const authService = {
         body: JSON.stringify({ email, password })
       });
 
-      const data = await response.json();
+      const data = await safeJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "AUTHENTICATION_FAILED");
@@ -92,7 +103,7 @@ export const authService = {
         body: JSON.stringify({ email, oldPassword, newPassword })
       });
 
-      const data = await response.json();
+      const data = await safeJson(response);
       if (!response.ok) {
         throw new Error(data.message || "UPLINK_PATTERN_FAILED");
       }
@@ -109,7 +120,7 @@ export const authService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-    const data = await response.json();
+    const data = await safeJson(response);
     if (!response.ok) throw new Error(data.message);
     return data;
   },
@@ -120,7 +131,7 @@ export const authService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
-    const data = await response.json();
+    const data = await safeJson(response);
     if (!response.ok) throw new Error(data.message);
     return data;
   },
@@ -131,7 +142,7 @@ export const authService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, code }),
     });
-    const data = await response.json();
+    const data = await safeJson(response);
     if (!response.ok) throw new Error(data.message);
     return data;
   },
@@ -142,7 +153,7 @@ export const authService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, newName }),
     });
-    const data = await response.json();
+    const data = await safeJson(response);
     if (!response.ok) throw new Error(data.message);
     
     // Update local storage to persist the new id
@@ -156,7 +167,7 @@ export const authService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, code, newPassword }),
     });
-    const data = await response.json();
+    const data = await safeJson(response);
     if (!response.ok) throw new Error(data.message);
     return data;
   }
