@@ -1,10 +1,13 @@
-# skillnova
-SkillNova is a futuristic, AI-native career development platform designed to bridge the chasm between academic learning and industry readiness. Powered by **Google Gemini 2.0 Flash**, it analyzes resumes, detects technical skill gaps, and generates dynamic, personalized learning roadmaps for every individual
-
 # SkillNova – AI-Driven Personalized Learning & Skill Gap Analyzer
 
 <p align="center">
   <img src="public/neural_twin_base.png" width="200" alt="SkillNova Logo">
+</p>
+
+<p align="center">
+  <a href="https://skillnova-three.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/Vercel-Live%20Demo-000000?style=for-the-badge&logo=vercel" alt="Vercel Live Demo">
+  </a>
 </p>
 
 ### ⚛️ Project Overview
@@ -35,7 +38,7 @@ SkillNova is a futuristic, AI-native career development platform designed to bri
 
 1. **Clone the Uplink:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/skillnova.git
+   git clone https://github.com/suravirani0405-svg/skillnova.git
    ```
 
 2. **Environment Synchronization:**
