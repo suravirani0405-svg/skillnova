@@ -31,6 +31,8 @@ SkillNova is a futuristic, AI-native career development platform designed to bri
 - **Combat Arena (Practice Battle)**: An AI-driven quiz engine that generates unique questions based on specific roadmap nodes.
 - **Nova AI Chatbot**: A 24/7 technical mentor trained on user-specific skill gaps and career trajectories.
 - **Neural Twin Visualizer**: A living visual representation of the user’s professional DNA.
+- **Neural Broadcast (Video Integration)**:Seamlessly embeds top-tier, curated technical video lectures directly into your AI Sync Roadmap. Instead of hunting for     tutorials, the system feeds you the exact video resource you need for your current node.
+- **Node-Specific Combat Tests**: After watching a Neural Broadcast lecture, you can't progress to the next roadmap node until you defeat a targeted "Combat          Test." The AI generates questions specifically about the video you just watched to guarantee knowledge retention.
 
 ---
 
