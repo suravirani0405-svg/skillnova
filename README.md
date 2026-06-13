@@ -20,19 +20,22 @@ SkillNova is a futuristic, AI-native career development platform designed to bri
 | **Node** | **Infrastructure** | **Logical Mission** |
 | :--- | :--- | :--- |
 | **Skill UI** | Vite + React | High-performance, glassmorphic interface with real-time AI sync. |
-| **Neural API** | FastAPI (Python) | The brain — handles PDF parsing, Gemini-driven analysis, and AI quiz generation. |
-| **Auth Node** | Node.js Express | Secure session management and identity synchronization. |
+| **Neural API** | Node.js Serverless | Edge-ready backend handling Gemini-driven AI Quiz generation and secure auth. |
+| **Analysis Node**| FastAPI (Python) | The deep-processing brain — handles heavy PDF resume parsing and lexicon analysis. |
 
 ---
 
 ### 🌟 Key Intelligence Features
-- **Deep AI Analysis**: Parses raw PDF resumes and academic transcripts to detect hidden technical potential.
-- **AI Sync Roadmap**: A dynamically generated phase-by-phase learning path with prioritized resources.
-- **Combat Arena (Practice Battle)**: An AI-driven quiz engine that generates unique questions based on specific roadmap nodes.
-- **Nova AI Chatbot**: A 24/7 technical mentor trained on user-specific skill gaps and career trajectories.
-- **Neural Twin Visualizer**: A living visual representation of the user’s professional DNA.
-- **Neural Broadcast (Video Integration)**:Seamlessly embeds top-tier, curated technical video lectures directly into your AI Sync Roadmap. Instead of hunting for     tutorials, the system feeds you the exact video resource you need for your current node.
-- **Node-Specific Combat Tests**: After watching a Neural Broadcast lecture, you can't progress to the next roadmap node until you defeat a targeted "Combat          Test." The AI generates questions specifically about the video you just watched to guarantee knowledge retention.
+1. **🧠 Deep AI Analysis**: Parses raw PDF resumes and academic transcripts to detect hidden technical potential.
+2. **🗺️ AI Sync Roadmap**: A dynamically generated phase-by-phase learning path with prioritized resources.
+3. **⚔️ Combat Arena (Practice Battle)**: An AI-driven quiz engine using Gemini to generate unique, unrepeatable technical questions on the fly, complete with instant "Technical Briefing" AI explanations.
+4. **🤖 Nova AI Chatbot**: A 24/7 technical mentor trained on user-specific skill gaps and career trajectories.
+5. **🧬 Neural Twin Visualizer**: A living visual representation of the user’s professional DNA.
+
+#### 🚀 Next-Gen Additions
+* **📡 Neural Broadcast (Video Integration):** Seamlessly embeds top-tier, curated technical video lectures directly into your AI Sync Roadmap.
+* **🎯 Node-Specific Combat Tests:** After watching a Neural Broadcast, you must defeat a targeted Combat Test generated specifically about that video's content before progressing.
+* **📈 Skill-Tree Progression System:** Treats learning like an RPG, unlocking new nodes and tech branches based on your Combat Arena victories.
 
 ---
 
@@ -41,16 +44,23 @@ SkillNova is a futuristic, AI-native career development platform designed to bri
 1. **Clone the Uplink:**
    ```bash
    git clone https://github.com/suravirani0405-svg/skillnova.git
+   cd skillnova
    ```
 
-2. **Environment Synchronization:**
-   Inside `ai_backend/.env`, inject your secure API key:
+2. **Install Core Dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Synchronization:**
+   Create a `.env` file in the **root directory** and inject your secure API key for the Node.js + Gemini engine:
    ```env
-   GEMINI_API_KEY=your_key_here
+   GEMINI_API_KEY=your_gemini_key_here
    ```
+   *(If running the heavy Python analysis node locally, mirror this key inside `ai_backend/.env` as well).*
 
-3. **Initialize Ecosystem:**
-   Run the master orchestrator to launch all nodes simultaneously:
+4. **Initialize Ecosystem:**
+   Run the master orchestrator to launch the frontend UI and backends simultaneously:
    ```bash
    python skillnova_all_in_one.py
    ```
