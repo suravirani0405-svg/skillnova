@@ -78,6 +78,102 @@ const Analysis = () => {
 
   const [error, setError] = useState(null);
 
+  // ─── CLIENT-SIDE FALLBACK ANALYSIS ENGINE ─────────────────────────────────
+  const TECH_LEXICON = [
+    [/\bpython\b/i, "Python Programming"],
+    [/\bjava\b/i, "Java Development"],
+    [/\bc\+\+\b/i, "C++ Development"],
+    [/\bc\b/i, "C Programming"],
+    [/react/i, "React.js Frontend"],
+    [/data structures|dsa|algorithms/i, "Data Structures & Algorithms"],
+    [/html|css/i, "Web Foundations (HTML/CSS)"],
+    [/node\.?js|nodejs/i, "Node.js Backend"],
+    [/sql|database|mysql|mongodb/i, "Database Management (SQL)"],
+    [/\bai\b|artificial intelligence/i, "Artificial Intelligence"],
+    [/machine learning|\bml\b/i, "Machine Learning"],
+    [/fastapi|rest\s*api|\bapi\b/i, "REST API Development"],
+    [/cloud|aws|vercel|docker/i, "Cloud Computing Fundamentals"],
+    [/system design/i, "Software Architecture Basics"],
+    [/unit test|pytest|jest/i, "Software Testing (QA)"],
+    [/agile|scrum/i, "Agile Project Management"],
+    [/git|github|open source/i, "Version Control (Git & GitHub)"],
+    [/javascript|js\b/i, "JavaScript Development"],
+    [/typescript|ts\b/i, "TypeScript"],
+    [/next\.?js/i, "Next.js Framework"],
+    [/django|flask/i, "Python Web Frameworks"],
+    [/cybersecurity|security/i, "Cybersecurity Fundamentals"],
+    [/linux|bash|shell/i, "Linux & Shell Scripting"],
+    [/kubernetes|k8s/i, "Docker Containerization"],
+  ];
+
+  const ROADMAP_LIBRARY = {
+    "Cloud Computing Fundamentals": { projects: ["Deploy a Full-Stack App on AWS / Vercel", "Set Up CI/CD Pipelines with GitHub Actions"] },
+    "Software Architecture Basics": { projects: ["Design a Scalable URL Shortener", "Build a Distributed Task Queue System"] },
+    "Software Testing (QA)": { projects: ["Achieve 100% Test Coverage for a Node.js API", "Mock External Services using TDD"] },
+    "Agile Project Management": { projects: ["Manage a 2-Week Sprint in Trello/Jira", "Run a Digital Scrum Board Simulation"] },
+    "Version Control (Git & GitHub)": { projects: ["Contribute a Feature to a GitHub Open-Source Repo", "Create a Documentation Site for Your Project"] },
+    "REST API Development": { projects: ["Build a Professional REST API with JWT Auth", "Implement Real-Time Webhooks"] },
+    "Cybersecurity Fundamentals": { projects: ["Build a Zero-Trust Auth Layer", "Implement HTTPS with Mutual TLS (mTLS)"] },
+    "Docker Containerization": { projects: ["Self-Healing Kubernetes Cluster Setup", "Multi-Region Traffic Mirroring"] },
+    "Data Structures & Algorithms": { projects: ["Build a Custom In-Memory Database", "Optimize Search Over 1M Records"] },
+    "Machine Learning": { projects: ["Build an End-to-End ML Pipeline", "Train a Custom Image Classifier"] },
+    "JavaScript Development": { projects: ["Build a Real-Time Chat App", "Create a Chrome Extension"] },
+    "TypeScript": { projects: ["Refactor a JavaScript Codebase to TypeScript", "Build a Type-Safe REST API"] },
+  };
+
+  const TARGET_SKILLS = [
+    "Cloud Computing Fundamentals", "Software Architecture Basics",
+    "REST API Development", "Software Testing (QA)",
+    "Agile Project Management", "Version Control (Git & GitHub)"
+  ];
+
+  const clientSideAnalysis = (text) => {
+    const upper = text.toUpperCase();
+    const extracted = TECH_LEXICON
+      .filter(([pattern]) => pattern.test(text))
+      .map(([, label]) => label);
+
+    const missing = TARGET_SKILLS.filter(s => !extracted.includes(s));
+    const targetMatches = TARGET_SKILLS.length - missing.length;
+    const score = Math.min(42 + (extracted.length * 4) + (targetMatches * 5), 95);
+    const placementProb = score >= 85 ? "High (S-Tier Ready)" : score >= 65 ? "Moderate (Growth Phase)" : "Entry-Level";
+    const mainMissing = missing.slice(0, 2).join(" and ");
+    const insights = extracted.length > 0
+      ? `Strong signals detected in ${extracted.slice(0, 2).join(" and ")}. ${mainMissing ? `Bridging gaps in ${mainMissing} will accelerate your career trajectory.` : "You are well-positioned for industry placement!"}`
+      : "No strong technical patterns detected yet. Add more subjects, projects, or paste your resume summary below.";
+
+    const roadmap = missing.slice(0, 4).map(skill => ({
+      topic: `Module: ${skill}`,
+      resource: ROADMAP_LIBRARY[skill]?.projects[0] || `Build a project in ${skill}`
+    }));
+
+    return {
+      active_skills: extracted,
+      experience_score: score,
+      missing_skills: missing,
+      placement_probability: placementProb,
+      recommendations: [
+        `Focus on ${missing[0] || "deepening your current stack"} to maximize placement readiness.`,
+        "Build 2–3 portfolio projects that directly demonstrate your verified skills."
+      ],
+      industry_trends: [
+        { name: "Generative AI", level: "Critical" },
+        { name: "Cloud Native Dev", level: "High" }
+      ],
+      comparison_graph: [
+        { domain: "Logic/Algorithms", user: /dsa|algorithms|data structure/i.test(text) ? 88 : 55, industry: 80 },
+        { domain: "Frontend/UI", user: /html|react|css|javascript/i.test(text) ? 85 : 40, industry: 75 },
+        { domain: "Backend/Data", user: /python|java|node|sql|api/i.test(text) ? 85 : 40, industry: 75 }
+      ],
+      roadmap: roadmap.length > 0 ? roadmap : [
+        { topic: "Elite Specialization", resource: "Architecting Zero-Downtime Systems" },
+        { topic: "Legacy Migration", resource: "Modernizing Monoliths to Microservices" }
+      ],
+      career_insights: insights
+    };
+  };
+  // ─── END FALLBACK ENGINE ───────────────────────────────────────────────────
+
   const handleStartAnalysis = async () => {
     console.log("[DEBUG] Starting analysis...");
     setIsProcessing(true);
@@ -88,49 +184,60 @@ const Analysis = () => {
     try {
       let result;
       if (uploadedFile) {
-        // Handle Resume Upload
-        const formData = new FormData();
-        formData.append('file', uploadedFile);
-        
-        const response = await fetch('/api/v1/analyze/resume', {
-          method: 'POST',
-          body: formData,
-        });
-        
-        if (!response.ok) throw new Error("AI Link Failed: Could not analyze resume.");
-        result = await response.json();
+        // Handle Resume Upload — try backend first, fallback to reading as text
+        try {
+          const formData = new FormData();
+          formData.append('file', uploadedFile);
+          const response = await fetch('/api/v1/analyze/resume', { method: 'POST', body: formData });
+          if (!response.ok) throw new Error("Backend unavailable");
+          result = await response.json();
+        } catch {
+          // Fallback: read file text client-side
+          const fileText = await uploadedFile.text().catch(() => uploadedFile.name);
+          result = clientSideAnalysis(fileText + " " + uploadedFile.name);
+        }
+
       } else if (resumeText && resumeText.trim()) {
-        // Handle Raw Text Analysis
-        const response = await fetch('/api/v1/analyze/text', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: resumeText.trim() }),
-        });
-        
-        if (!response.ok) throw new Error("AI Link Failed: Could not analyze professional summary.");
-        result = await response.json();
-      } else if (academicData.cgpa || academicData.subjects[0].name) {
-        // Handle Academic Matrix
-        const response = await fetch('/api/v1/analyze/academic', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(academicData),
-        });
-        
-        if (!response.ok) throw new Error("AI Link Failed: Could not process academic matrix.");
-        result = await response.json();
+        // Handle Raw Text Analysis — try backend first, fallback locally
+        try {
+          const response = await fetch('/api/v1/analyze/text', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: resumeText.trim() }),
+          });
+          if (!response.ok) throw new Error("Backend unavailable");
+          result = await response.json();
+        } catch {
+          result = clientSideAnalysis(resumeText.trim());
+        }
+
+      } else if (academicData.cgpa || academicData.subjects[0]?.name) {
+        // Handle Academic Matrix — try backend first, fallback locally
+        try {
+          const response = await fetch('/api/v1/analyze/academic', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(academicData),
+          });
+          if (!response.ok) throw new Error("Backend unavailable");
+          result = await response.json();
+        } catch {
+          // Build text from academic form data and run local analysis
+          const subjectText = academicData.subjects.filter(s => s.name).map(s => s.name).join(", ");
+          const projectText = academicData.projects.filter(p => p.name).map(p => `${p.name} ${p.usedSkills || ""}`).join(", ");
+          const fullText = `CGPA: ${academicData.cgpa}. Subjects: ${subjectText}. Projects: ${projectText}`;
+          result = clientSideAnalysis(fullText);
+        }
+
       } else {
-        throw new Error("No data found. Please populate your educational matrix or professional summary.");
+        throw new Error("No data found. Please fill in your subjects/CGPA or paste your resume summary.");
       }
 
-      // Smooth transition to results after AI finishes
+      // Save and navigate
       localStorage.setItem('skillnova_analysis', JSON.stringify(result));
       setProgress(100);
       setStage(analysisStages.length - 1);
-      
-      setTimeout(() => {
-        navigate('/skill-gap', { state: { analysisResult: result } });
-      }, 1500);
+      setTimeout(() => navigate('/skill-gap', { state: { analysisResult: result } }), 1500);
 
     } catch (err) {
       console.error(err);
