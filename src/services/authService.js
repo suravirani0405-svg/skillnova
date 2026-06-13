@@ -21,12 +21,6 @@ export const authService = {
    * Register a new user
    */
   async register(userData) {
-    // Check local storage first to prevent duplicate registrations locally
-    const localUsers = JSON.parse(localStorage.getItem('skillnova_local_users') || '[]');
-    if (localUsers.some(u => u.email === userData.email)) {
-      throw new Error("COMMUNICATION_LINK_EXISTING: Email already has an active uplink.");
-    }
-
     try {
       const response = await fetch(`${API_BASE_URL}/register`, {
         method: 'POST',
@@ -40,8 +34,14 @@ export const authService = {
         throw new Error(data.message || "COMMUNICATION_LINK_ERROR");
       }
 
-      // Store in local users registry for offline/persistence fallback
-      localUsers.push(userData);
+      // Store/Update in local users registry for offline/persistence fallback
+      const localUsers = JSON.parse(localStorage.getItem('skillnova_local_users') || '[]');
+      const localUserIndex = localUsers.findIndex(u => u.email === userData.email);
+      if (localUserIndex === -1) {
+        localUsers.push(userData);
+      } else {
+        localUsers[localUserIndex] = userData;
+      }
       localStorage.setItem('skillnova_local_users', JSON.stringify(localUsers));
 
       // Store identity and secure token
@@ -58,7 +58,10 @@ export const authService = {
         throw error;
       }
 
-      // Fallback: register locally
+      // Fallback: register/update locally
+      const localUsers = JSON.parse(localStorage.getItem('skillnova_local_users') || '[]');
+      const localUserIndex = localUsers.findIndex(u => u.email === userData.email);
+      
       const newUser = {
         id: Date.now().toString(),
         ...userData,
@@ -66,7 +69,11 @@ export const authService = {
         createdAt: new Date().toISOString()
       };
       
-      localUsers.push(newUser);
+      if (localUserIndex === -1) {
+        localUsers.push(newUser);
+      } else {
+        localUsers[localUserIndex] = newUser;
+      }
       localStorage.setItem('skillnova_local_users', JSON.stringify(localUsers));
       
       const token = 'local_token_' + newUser.id;
