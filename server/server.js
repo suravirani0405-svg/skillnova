@@ -24,6 +24,12 @@ const DB_PATH = IS_VERCEL ? path.join('/tmp', 'users.json') : path.join(__dirnam
 app.use(cors());
 app.use(express.json());
 
+// Request logging for debugging on Vercel
+app.use((req, res, next) => {
+  console.log(`[API] ${req.method} ${req.url}`);
+  next();
+});
+
 // Support Root Verification
 app.get('/', (req, res) => {
   res.json({ 
@@ -34,13 +40,50 @@ app.get('/', (req, res) => {
   });
 });
 
+// API root health check (for /api requests on Vercel)
+app.get('/api', (req, res) => {
+  res.json({ 
+    status: "ONLINE",
+    message: "SkillNova API Active.",
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Initialize dummy database if not exists
-if (!fs.existsSync(DB_PATH)) {
-  fs.writeFileSync(DB_PATH, JSON.stringify([]));
-}
+const initDB = async () => {
+  if (!fs.existsSync(DB_PATH)) {
+    // Seed with a demo user so login works immediately on Vercel
+    const demoPassword = await bcrypt.hash('demo1234', 10);
+    const seedUsers = [
+      {
+        id: 'demo_001',
+        name: 'Demo User',
+        email: 'demo@skillnova.com',
+        password: demoPassword,
+        college: 'Demo University',
+        degree: 'B.Tech',
+        year: '3rd',
+        domain: 'Computer Science',
+        stats: { matches: 0, battles: 0, readiness: 15 },
+        createdAt: new Date().toISOString()
+      }
+    ];
+    fs.writeFileSync(DB_PATH, JSON.stringify(seedUsers, null, 2));
+    console.log('[DB] Initialized with demo user: demo@skillnova.com / demo1234');
+  }
+};
+initDB().catch(err => console.error('[DB] Init error:', err));
 
 // --- HELPER FUNCTIONS ---
-const getUsers = () => JSON.parse(fs.readFileSync(DB_PATH));
+const getUsers = () => {
+  try {
+    return JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
+  } catch (err) {
+    console.error('[DB] Read error, resetting:', err.message);
+    fs.writeFileSync(DB_PATH, JSON.stringify([]));
+    return [];
+  }
+};
 const saveUsers = (users) => fs.writeFileSync(DB_PATH, JSON.stringify(users, null, 2));
 
 // --- API ENDPOINTS ---
