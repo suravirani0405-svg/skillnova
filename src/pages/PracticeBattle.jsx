@@ -264,22 +264,126 @@ const PracticeBattle = () => {
                             setUserAnswers({});
                             setScore(0);
                             
-                            try {
-                                const res = await fetch("/api/generate-quiz", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ subject, difficulty }),
-                                });
-                                const data = await res.json();
-                                if (data?.questions?.length > 0) {
-                                  setActiveQuestions(data.questions);
-                                } else {
-                                  alert("API Error: No questions generated. " + JSON.stringify(data));
-                                }
-                            } catch (e) {
-                                alert("Frontend Network Error: " + e.message);
-                                console.error("[AI ERROR] ", e);
-                            }
+                             // ── OFFLINE QUIZ BANK ──────────────────────────────
+                             const QUIZ_BANK = {
+                               PYTHON: [
+                                 { question: "What is a list comprehension in Python?", options: ["A compact way to create lists", "A type of loop", "A class method", "A built-in function"], answer: "A compact way to create lists" },
+                                 { question: "How do you define a function in Python?", options: ["def my_func():", "function my_func():", "func my_func():", "create my_func():"], answer: "def my_func():" },
+                                 { question: "Which keyword handles exceptions in Python?", options: ["except", "catch", "error", "handle"], answer: "except" },
+                                 { question: "Which data structure is LIFO in Python?", options: ["Stack", "Queue", "List", "Dict"], answer: "Stack" },
+                                 { question: "What does 'len()' return?", options: ["Length of an object", "Last element", "Type of object", "Memory address"], answer: "Length of an object" },
+                                 { question: "Which of these is immutable in Python?", options: ["Tuple", "List", "Dictionary", "Set"], answer: "Tuple" },
+                                 { question: "What is the output of 2**3 in Python?", options: ["8", "6", "9", "5"], answer: "8" },
+                                 { question: "How do you open a file in Python?", options: ["open('file.txt')", "file.open('file.txt')", "read('file.txt')", "load('file.txt')"], answer: "open('file.txt')" },
+                                 { question: "Which library is used for data manipulation in Python?", options: ["pandas", "numpy", "flask", "django"], answer: "pandas" },
+                                 { question: "What does 'self' refer to in a Python class?", options: ["The current instance", "The class itself", "The parent class", "A static method"], answer: "The current instance" },
+                               ],
+                               JAVA: [
+                                 { question: "What is the size of int in Java?", options: ["4 bytes", "2 bytes", "8 bytes", "Depends on OS"], answer: "4 bytes" },
+                                 { question: "Which keyword is used for inheritance in Java?", options: ["extends", "implements", "inherits", "super"], answer: "extends" },
+                                 { question: "Is Java pass-by-value or pass-by-reference?", options: ["Pass-by-value", "Pass-by-reference", "Both", "Neither"], answer: "Pass-by-value" },
+                                 { question: "What is the root class of all Java classes?", options: ["Object", "Class", "Main", "String"], answer: "Object" },
+                                 { question: "Which access modifier is most restrictive?", options: ["private", "public", "protected", "default"], answer: "private" },
+                                 { question: "What is a constructor in Java?", options: ["A method with same name as class", "A static method", "An interface", "A final method"], answer: "A method with same name as class" },
+                                 { question: "Which collection allows duplicate elements?", options: ["ArrayList", "HashSet", "TreeSet", "LinkedHashSet"], answer: "ArrayList" },
+                                 { question: "What does JVM stand for?", options: ["Java Virtual Machine", "Java Variable Method", "Java Verified Module", "Java Vector Memory"], answer: "Java Virtual Machine" },
+                                 { question: "Which keyword prevents method overriding?", options: ["final", "static", "abstract", "private"], answer: "final" },
+                                 { question: "What is autoboxing in Java?", options: ["Auto-converting primitives to wrapper objects", "Automatic memory allocation", "Auto garbage collection", "Boxing variables in arrays"], answer: "Auto-converting primitives to wrapper objects" },
+                               ],
+                               C: [
+                                 { question: "What does malloc() do in C?", options: ["Allocates memory dynamically", "Frees memory", "Opens a file", "Prints output"], answer: "Allocates memory dynamically" },
+                                 { question: "How do you declare a pointer in C?", options: ["int *ptr;", "int ptr;", "pointer ptr;", "int ptr*;"], answer: "int *ptr;" },
+                                 { question: "Which header is used for I/O in C?", options: ["<stdio.h>", "<stdlib.h>", "<conio.h>", "<math.h>"], answer: "<stdio.h>" },
+                                 { question: "What is the return type of main() in C?", options: ["int", "void", "float", "char"], answer: "int" },
+                                 { question: "Which operator is logical AND in C?", options: ["&&", "||", "AND", "&"], answer: "&&" },
+                                 { question: "What does 'sizeof' operator return?", options: ["Size in bytes", "Size in bits", "Number of elements", "Memory address"], answer: "Size in bytes" },
+                                 { question: "What is a segmentation fault?", options: ["Accessing invalid memory", "Stack overflow", "Syntax error", "Division by zero"], answer: "Accessing invalid memory" },
+                                 { question: "Which loop executes at least once?", options: ["do-while", "while", "for", "All of them"], answer: "do-while" },
+                                 { question: "What does 'break' do in a loop?", options: ["Exits the loop", "Skips iteration", "Restarts loop", "Pauses execution"], answer: "Exits the loop" },
+                                 { question: "What is a struct in C?", options: ["A user-defined data type", "A built-in function", "A loop construct", "A pointer type"], answer: "A user-defined data type" },
+                               ],
+                               SQL: [
+                                 { question: "Which SQL statement retrieves data?", options: ["SELECT", "GET", "FETCH", "EXTRACT"], answer: "SELECT" },
+                                 { question: "Which clause filters rows?", options: ["WHERE", "HAVING", "GROUP BY", "FILTER"], answer: "WHERE" },
+                                 { question: "Which SQL keyword removes duplicates?", options: ["DISTINCT", "UNIQUE", "DIFFERENT", "ONLY"], answer: "DISTINCT" },
+                                 { question: "Which JOIN returns all rows from both tables?", options: ["FULL OUTER JOIN", "LEFT JOIN", "RIGHT JOIN", "INNER JOIN"], answer: "FULL OUTER JOIN" },
+                                 { question: "What does GROUP BY do?", options: ["Groups rows with same values", "Sorts rows", "Filters rows", "Joins tables"], answer: "Groups rows with same values" },
+                                 { question: "Which function counts rows?", options: ["COUNT()", "SUM()", "TOTAL()", "ROWS()"], answer: "COUNT()" },
+                                 { question: "What is a PRIMARY KEY?", options: ["Uniquely identifies a row", "A foreign reference", "A calculated field", "An index"], answer: "Uniquely identifies a row" },
+                                 { question: "Which SQL command modifies existing data?", options: ["UPDATE", "MODIFY", "CHANGE", "ALTER"], answer: "UPDATE" },
+                                 { question: "What is a FOREIGN KEY?", options: ["A key referencing another table's primary key", "A unique index", "An encrypted key", "A composite key"], answer: "A key referencing another table's primary key" },
+                                 { question: "Which SQL clause is used with aggregate functions?", options: ["HAVING", "WHERE", "GROUP", "ORDER BY"], answer: "HAVING" },
+                               ],
+                               DSA: [
+                                 { question: "Which data structure is used for BFS?", options: ["Queue", "Stack", "Tree", "Heap"], answer: "Queue" },
+                                 { question: "Worst-case time of Quick Sort?", options: ["O(n²)", "O(n log n)", "O(n)", "O(log n)"], answer: "O(n²)" },
+                                 { question: "Which structure uses FIFO?", options: ["Queue", "Stack", "Array", "Graph"], answer: "Queue" },
+                                 { question: "What is a complete binary tree?", options: ["All levels filled except possibly last", "Every node has 2 children", "All leaves at same level", "Only root node exists"], answer: "All levels filled except possibly last" },
+                                 { question: "Time complexity of Binary Search?", options: ["O(log n)", "O(n)", "O(n²)", "O(1)"], answer: "O(log n)" },
+                                 { question: "Which sorting is stable?", options: ["Merge Sort", "Quick Sort", "Heap Sort", "Selection Sort"], answer: "Merge Sort" },
+                                 { question: "What is a hash collision?", options: ["Two keys map to same hash", "Memory overflow", "Null pointer error", "Stack overflow"], answer: "Two keys map to same hash" },
+                                 { question: "What does DFS stand for?", options: ["Depth First Search", "Data Fetch System", "Dynamic Function Search", "Direct File Sort"], answer: "Depth First Search" },
+                                 { question: "Which data structure is used for undo operations?", options: ["Stack", "Queue", "Graph", "Tree"], answer: "Stack" },
+                                 { question: "Best case of Bubble Sort?", options: ["O(n)", "O(n²)", "O(log n)", "O(1)"], answer: "O(n)" },
+                               ],
+                               HTML: [
+                                 { question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Text Markup Language", "Hyper Transfer Markup Language", "Home Tool Markup Language"], answer: "Hyper Text Markup Language" },
+                                 { question: "Which tag creates the largest heading?", options: ["<h1>", "<h6>", "<head>", "<title>"], answer: "<h1>" },
+                                 { question: "Which tag creates a hyperlink?", options: ["<a>", "<link>", "<href>", "<url>"], answer: "<a>" },
+                                 { question: "Which tag displays an image?", options: ["<img>", "<image>", "<pic>", "<photo>"], answer: "<img>" },
+                                 { question: "Which tag creates a line break?", options: ["<br>", "<lb>", "<break>", "<newline>"], answer: "<br>" },
+                                 { question: "Which tag creates an ordered list?", options: ["<ol>", "<ul>", "<li>", "<list>"], answer: "<ol>" },
+                                 { question: "Which attribute specifies CSS class?", options: ["class", "id", "style", "name"], answer: "class" },
+                                 { question: "Which tag defines a table row?", options: ["<tr>", "<td>", "<th>", "<row>"], answer: "<tr>" },
+                                 { question: "Which input type creates a checkbox?", options: ["checkbox", "check", "tick", "box"], answer: "checkbox" },
+                                 { question: "Which tag is used for bold text?", options: ["<strong>", "<bold>", "<b>", "<em>"], answer: "<strong>" },
+                               ],
+                               CSS: [
+                                 { question: "What does CSS stand for?", options: ["Cascading Style Sheets", "Creative Style System", "Computer Style Sheets", "Colorful Style Scripts"], answer: "Cascading Style Sheets" },
+                                 { question: "Which property changes text color?", options: ["color", "text-color", "font-color", "foreground"], answer: "color" },
+                                 { question: "Which selector targets an element by ID?", options: ["#id", ".id", "*id", "id"], answer: "#id" },
+                                 { question: "Which property controls spacing inside an element?", options: ["padding", "margin", "border", "spacing"], answer: "padding" },
+                                 { question: "How do you apply a CSS file to HTML?", options: ["<link rel='stylesheet'>", "<style src=''>", "<css href=''>", "<import css=''>"], answer: "<link rel='stylesheet'>" },
+                                 { question: "What is the default display of a <div>?", options: ["block", "inline", "flex", "grid"], answer: "block" },
+                                 { question: "Which property makes an element invisible but occupies space?", options: ["visibility: hidden", "display: none", "opacity: 0", "z-index: -1"], answer: "visibility: hidden" },
+                                 { question: "What does 'z-index' control?", options: ["Stack order of elements", "Zoom level", "Font size", "Element width"], answer: "Stack order of elements" },
+                                 { question: "Which property creates rounded corners?", options: ["border-radius", "corner-radius", "round-border", "edge-radius"], answer: "border-radius" },
+                                 { question: "What is the CSS box model?", options: ["Content, padding, border, margin", "Width, height, color, font", "Display, position, float, clear", "Top, right, bottom, left"], answer: "Content, padding, border, margin" },
+                               ],
+                               DEFAULT: [
+                                 { question: "What is the core principle of software engineering?", options: ["Scalability and Efficiency", "Speed over correctness", "Avoiding documentation", "Hardcoding values"], answer: "Scalability and Efficiency" },
+                                 { question: "Which optimization technique avoids redundant calculations?", options: ["Caching and Memoization", "Code duplication", "Synchronous blocking", "Overhead injection"], answer: "Caching and Memoization" },
+                                 { question: "What is the primary focus of debugging?", options: ["State and variable memory", "CPU temperature", "Monitor refresh rate", "Keyboard layout"], answer: "State and variable memory" },
+                                 { question: "How are architectural patterns applied?", options: ["Separating concerns and modularizing logic", "Writing everything in one file", "Deleting old variables", "Bypassing security"], answer: "Separating concerns and modularizing logic" },
+                                 { question: "Why is version control critical?", options: ["Track history and enable collaboration", "Make apps run faster", "Reduce file size", "Increase RAM"], answer: "Track history and enable collaboration" },
+                                 { question: "What represents a memory leak risk?", options: ["Unreferenced listeners and open sockets", "Printing to console", "Using comments", "Writing tests"], answer: "Unreferenced listeners and open sockets" },
+                                 { question: "What is the advantage of strict typing?", options: ["Compile-time error catching", "Faster runtime", "No documentation needed", "Unlimited scopes"], answer: "Compile-time error catching" },
+                                 { question: "How should credentials be handled?", options: ["Environment variables and Vaults", "Hardcoded in code", "Written in docs", "Stored in text files"], answer: "Environment variables and Vaults" },
+                                 { question: "Best approach for horizontal scaling?", options: ["Stateless instances with load balancing", "One large server", "Storing sessions in memory", "Disabling firewalls"], answer: "Stateless instances with load balancing" },
+                                 { question: "Which paradigm is best for I/O operations?", options: ["Asynchronous Non-Blocking", "Single-threaded synchronous", "Manual deallocation", "Infinite recursion"], answer: "Asynchronous Non-Blocking" },
+                               ],
+                             };
+
+                             const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+
+                             try {
+                                 const res = await fetch("/api/generate-quiz", {
+                                     method: "POST",
+                                     headers: { "Content-Type": "application/json" },
+                                     body: JSON.stringify({ subject, difficulty }),
+                                 });
+                                 const data = await res.json();
+                                 if (data?.questions?.length > 0) {
+                                   setActiveQuestions(data.questions);
+                                 } else {
+                                   throw new Error("Empty response");
+                                 }
+                             } catch {
+                                 // Fallback to offline quiz bank
+                                 const key = subject.toUpperCase().replace(/[^A-Z]/g, "");
+                                 const bank = QUIZ_BANK[key] || QUIZ_BANK["DEFAULT"];
+                                 setActiveQuestions(shuffle(bank).slice(0, 10));
+                             }
 
                             setCountdown(3);
                             const timer = setInterval(() => {
