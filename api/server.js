@@ -1,12 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const fs = require('fs');
-const path = require('path');
+import express from 'express';
+import cors from 'cors';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import fs from 'fs';
+import path from 'path';
 
 // ============================================================
-// SkillNova Backend — Self-contained Vercel Serverless Function
+// SkillNova Backend — Vercel Serverless Function (ESM)
 // ============================================================
 
 const app = express();
@@ -26,8 +26,7 @@ app.use((req, res, next) => {
 const initDB = () => {
   try {
     if (!fs.existsSync(DB_PATH)) {
-      const bcryptSync = require('bcryptjs');
-      const demoHash = bcryptSync.hashSync('demo1234', 10);
+      const demoHash = bcrypt.hashSync('demo1234', 10);
       const seed = [
         {
           id: 'demo_001',
@@ -43,7 +42,7 @@ const initDB = () => {
         }
       ];
       fs.writeFileSync(DB_PATH, JSON.stringify(seed, null, 2));
-      console.log('[DB] Seeded with demo user: demo@skillnova.com / demo1234');
+      console.log('[DB] Seeded: demo@skillnova.com / demo1234');
     }
   } catch (err) {
     console.error('[DB] Init error:', err.message);
@@ -270,9 +269,9 @@ app.post('/api/verify-code', (req, res) => {
   }
 });
 
-// --- CATCH-ALL for unmatched API routes ---
+// --- CATCH-ALL ---
 app.all('*', (req, res) => {
   res.status(404).json({ message: "ENDPOINT_NOT_FOUND: " + req.method + " " + req.url });
 });
 
-module.exports = app;
+export default app;
