@@ -19,3 +19,6 @@ out.txt
 test_api_out.json
 test_res.json
 *.log
+
+.vercel
+.env*
