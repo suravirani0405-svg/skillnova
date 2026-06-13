@@ -368,9 +368,9 @@ const Analysis = () => {
                   <motion.button 
                       onClick={(e) => { e.preventDefault(); handleStartAnalysis(); }} 
                       initial={{ scale: 1 }}
-                      whileHover={{ scale: 1.02, shadow: "0 0 20px rgba(34,197,94,0.4)" }}
+                      whileHover={{ scale: 1.02, shadow: "0 0 20px rgba(16,185,129,0.4)" }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full py-6 bg-brand-primary text-black font-black uppercase tracking-[0.4em] text-sm rounded-2xl transition-all flex items-center justify-center gap-4 group"
+                      className="w-full py-6 bg-emerald-500 text-white font-black uppercase tracking-[0.4em] text-sm rounded-2xl transition-all flex items-center justify-center gap-4 group border border-emerald-400 shadow-[0_10px_40px_rgba(16,185,129,0.3)]"
                   >
                       <Command className="w-5 h-5 group-hover:rotate-180 transition-all duration-700" />
                       Initializing AI Analysis Engine 

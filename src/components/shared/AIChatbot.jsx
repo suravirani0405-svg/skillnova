@@ -10,6 +10,133 @@ const QUICK_PROMPTS = [
   { label: "My Score", prompt: "What is my placement readiness score?" },
 ];
 
+const CHAT_FALLBACK = {
+  greet: [
+    "AI Uplink established. I am **Nova**, your career intelligence AI. Ready to optimize your career trajectory.",
+    "Nova online. How can I assist you with your professional synchronization today?"
+  ],
+  skill: [
+    "Based on your profile, your active skill matrix is solid. Focus on deepening those while bridging identified gaps systematically.",
+    "Skill mastery is about depth over breadth. Focus on building real-world projects that showcase your primary skills."
+  ],
+  gap: [
+    "Your detected skill gaps represent your highest-ROI learning opportunities. I recommend tackling them systematically.",
+    "Gaps are just bridges to be built. Prioritize the missing skills displayed in your dashboard gap report."
+  ],
+  roadmap: [
+    "Your **AI Sync Roadmap** is personalized to help you bridge your exact skill gaps. Complete each node by passing the Combat Test with 50%+.",
+    "The progression loop is simple: Study the concept → pass the **Combat Test** → unlock the next phase. Keep pushing!"
+  ],
+  interview: [
+    "For technical interviews: Always explain your design and algorithmic approach before writing code. Communication is key.",
+    "Use our **Practice Battle** arena to simulate timed interview conditions. Focus on writing clean code and explanation."
+  ],
+  resume: [
+    "Make sure your resume quantifies impact. Use the STAR method: *'Accomplished X, measured by Y, by doing Z.'*",
+    "Keep your resume focused and under 1 page. Lead with your highest-readiness projects and verified skills."
+  ],
+  career: [
+    "The tech industry highly values specialization. Focus on mastering your target domain rather than trying to learn everything.",
+    "Build a signature portfolio project in your target career domain. Direct evidence beats bullet points every time."
+  ],
+  default: [
+    "That is an interesting query. Tell me more about your learning goals or what project you are trying to build.",
+    "I am cross-referencing your profile against current industry benchmarks. What specific role are you targeting?"
+  ]
+};
+
+const smartFallbackChat = (message, context) => {
+  const m = message.toLowerCase();
+  const active = context.active_skills || [];
+  const missing = context.missing_skills || [];
+  const career = context.career_interest || "";
+  const score = context.experience_score || 0;
+  const name = context.name || "Commander";
+
+  const randomChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  if (/\b(hi|hello|hey|greetings|yo)\b/.test(m)) {
+    let base = `Hello **${name}**! ` + randomChoice(CHAT_FALLBACK.greet);
+    if (active.length > 0) {
+      base += ` I see you already have strengths in **${active.slice(0, 3).join(", ")}**!`;
+    }
+    return base;
+  }
+
+  if (/\b(skill|strength|good at|active|expert|know)\b/.test(m)) {
+    let base = randomChoice(CHAT_FALLBACK.skill);
+    if (active.length > 0) {
+      base += `\n\nYour verified active skills: ${active.map(s => `\n- **${s}**`).join("")}`;
+    } else {
+      base += "\n\nYou haven't scanned your resume yet. Head to the dashboard to initiate a deep scan and verify your skills!";
+    }
+    return base;
+  }
+
+  if (/\b(gap|missing|weak|lack|improve|learn|need to)\b/.test(m)) {
+    let base = randomChoice(CHAT_FALLBACK.gap);
+    if (missing.length > 0) {
+      base += `\n\nHere are the top skill gaps you should bridge: ${missing.slice(0, 5).map(s => `\n- **${s}**`).join("")}`;
+    } else {
+      base += "\n\nFantastic! No major skill gaps detected. You are ready to start technical combat trials!";
+    }
+    return base;
+  }
+
+  if (/\b(roadmap|path|phase|node|unlock|progress)\b/.test(m)) {
+    let base = randomChoice(CHAT_FALLBACK.roadmap);
+    if (career) {
+      base += `\n\nYour roadmap is fine-tuned for: **${career}**.`;
+    }
+    return base;
+  }
+
+  if (/\b(interview|round|prepare|technical|job|placement|company|recruit)\b/.test(m)) {
+    let base = randomChoice(CHAT_FALLBACK.interview);
+    if (missing.length > 0) {
+      base += `\n\n**Quick Tip**: Be ready to discuss how you plan to learn or bridge **${missing[0]}** during your preparation.`;
+    }
+    return base;
+  }
+
+  if (/\b(resume|cv|profile|portfolio)\b/.test(m)) {
+    return randomChoice(CHAT_FALLBACK.resume);
+  }
+
+  if (/\b(career|role|future|domain|field|interest)\b/.test(m)) {
+    let base = randomChoice(CHAT_FALLBACK.career);
+    if (career) {
+      base += `\n\nGiven your target of **${career}**, I recommend designing a full-stack system incorporating your active skills.`;
+    }
+    return base;
+  }
+
+  if (/\b(score|percent|readiness|placement score|points)\b/.test(m)) {
+    if (score > 0) {
+      const tier = score >= 90 ? "S-Tier" : score >= 75 ? "A-Tier" : score >= 55 ? "B-Tier" : "C-Tier";
+      return `Your Placement Readiness Score is **${score}%** (${tier}).\n\n` + 
+        (score >= 75 
+          ? "Excellent readiness! You are well-positioned for top-tier technical placement. Keep honing your system design skills." 
+          : "Good start. Focus on bridging your high-priority skill gaps to push this score above 75% for optimum placement alignment.");
+    } else {
+      return "Your Placement Readiness Score is currently not calibrated. Please scan your resume on the dashboard to calculate your initial score.";
+    }
+  }
+
+  let reply = `I've registered your message, **${name}**. `;
+  if (career) {
+    reply += `As a budding **${career}**, `;
+  }
+  if (active.length > 0) {
+    reply += `leveraging your expertise in **${active[0]}** is key. `;
+  }
+  if (missing.length > 0) {
+    reply += `To take this further, let's look at bridging your gap in **${missing[0]}**. `;
+  }
+  reply += "\n\nFeel free to ask me about your roadmap, skill gaps, or interview tips!";
+  return reply;
+};
+
 const AIChatbot = () => {
   const [isOpen, setIsOpen]     = useState(false);
   const [messages, setMessages] = useState([{ 
@@ -25,11 +152,13 @@ const AIChatbot = () => {
   const getUserContext = () => {
     const analysis = JSON.parse(localStorage.getItem('skillnova_analysis') || '{}');
     const profile  = JSON.parse(localStorage.getItem('skillnova_profile') || '{}');
+    const user     = JSON.parse(localStorage.getItem('skillnova_user') || '{}');
     return {
+      name:             user.name || profile.name || "Commander",
       active_skills:    analysis.active_skills    || [],
       missing_skills:   analysis.missing_skills   || [],
       experience_score: analysis.experience_score || 0,
-      career_interest:  profile.careerInterest    || "",
+      career_interest:  user.domain || profile.careerInterest || "AI Software Engineer",
     };
   };
 
@@ -85,8 +214,10 @@ const AIChatbot = () => {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }]);
     } catch {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      const replyText = smartFallbackChat(msgText, getUserContext());
       setMessages(prev => [...prev, { 
-        role: "bot", content: "Neural link disrupted. Ensure the AI Engine is running on port 8000.",
+        role: "bot", content: replyText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }]);
     } finally {
