@@ -284,6 +284,7 @@ Rules:
 - Cover varied sub-topics of ${subject} (don't repeat similar questions)
 - Each question must have exactly 4 options
 - One option must be the correct answer
+- Provide a brief, technical 1-2 sentence explanation of why the answer is correct
 - Difficulty: ${difficulty} (Easy=basic concepts, Medium=application, Hard=advanced/tricky)
 
 Return ONLY a valid JSON array like this:
@@ -291,11 +292,12 @@ Return ONLY a valid JSON array like this:
   {
     "question": "Question text here?",
     "options": ["Option A", "Option B", "Option C", "Option D"],
-    "answer": "Option A"
+    "answer": "Option A",
+    "explanation": "Brief technical explanation of why Option A is correct."
   }
 ]
 
-No markdown, no explanation, just the JSON array.`;
+No markdown, no explanation outside the JSON, just the JSON array.`;
 
       const geminiRes = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
