@@ -1,4 +1,21 @@
+# Dependency directories
 node_modules/
 dist/
+
+# Env / Secrets
 .env
+.env.*
 *.local
+
+# Python cache and bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Test output and temporary files
+out.txt
+test_api_out.json
+test_res.json
+*.log
